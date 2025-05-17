@@ -23,30 +23,12 @@
       text-align: center;
       margin-bottom: 30px;
     }
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
-    }
-    input, select, textarea {
+    iframe {
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background-color: #888;
-      color: white;
+      height: 700px;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #666;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -57,63 +39,8 @@
     <p>נשמח לראות אתכם חוגגים איתנו ❤</p>
     <p>האירוע יתקיים במקום יפייפה (הפרטים בהמשך)</p>
   </div>
-  <form name="rsvp-form">
-    <label for="name">שם מלא</label>
-    <input type="text" id="name" name="name" required>
 
-    <label for="attendance">האם תגיעו?</label>
-    <select id="attendance" name="attendance">
-      <option value="כן">כן, בשמחה!</option>
-      <option value="לא">לצערי לא אוכל להגיע</option>
-    </select>
+  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc5tjMoSnPmBlaDDCCkw56RMSW8IAuvXYuEsTKlnCPJlzkMsg/viewform?embedded=true">טוען טופס…</iframe>
 
-    <label for="guests">כמה אנשים יגיעו?</label>
-    <input type="number" id="guests" name="guests" min="1" max="10">
-
-    <label for="menu">העדפה קולינרית</label>
-    <select id="menu" name="menu">
-      <option value="רגיל">רגיל</option>
-      <option value="צמחוני">צמחוני</option>
-      <option value="טבעוני">טבעוני</option>
-    </select>
-
-    <label for="notes">הערות / ברכות</label>
-    <textarea id="notes" name="notes" rows="3"></textarea>
-
-    <label for="phone">טלפון (אופציונלי)</label>
-    <input type="tel" id="phone" name="phone">
-
-    <button type="submit">שלח אישור הגעה</button>
-  </form>
-
-  <script>
-    const form = document.forms['rsvp-form'];
-
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-
-      const data = {
-        name: form.name.value,
-        attendance: form.attendance.value,
-        guests: form.guests.value,
-        menu: form.menu.value,
-        notes: form.notes.value,
-        phone: form.phone.value
-      };
-
-      fetch('https://script.google.com/macros/s/AKfycbymO38zpq-s3avdoiBKiBgFl7NEL5IIaf0Bxd49bkK_VAD5cKuqKBTUiY1ZGgKjhDHDoQ/exec', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      })
-      .then(response => response.text())
-      .then(text => {
-        alert('שרת הגיב: ' + text);
-        form.reset();
-      })
-      .catch(error => {
-        alert('שגיאה בשליחה: ' + error.message);
-      });
-    });
-  </script>
 </body>
 </html>
