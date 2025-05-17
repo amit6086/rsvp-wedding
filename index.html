@@ -7,32 +7,26 @@
   <style>
     body {
       font-family: 'Heebo', sans-serif;
-      background: url('https://images.unsplash.com/photo-1524492449090-1e2a06c1d2d4?auto=format&fit=crop&w=1280&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: #333;
+      background: #f2f2f2;
       padding: 20px;
     }
     .container {
-      background: rgba(255, 255, 255, 0.95);
+      background: white;
       padding: 30px;
       max-width: 700px;
       margin: auto;
       border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.2);
+      box-shadow: 0 0 30px rgba(0,0,0,0.1);
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 0;
+    h1, h2 {
+      text-align: center;
       color: #a36d6d;
     }
-    h2 {
-      margin-top: 5px;
-      font-size: 1.5em;
-      color: #555;
-    }
-    .info {
+    #countdown {
       text-align: center;
-      margin-bottom: 30px;
+      font-size: 1em;
+      color: #444;
+      margin-bottom: 20px;
     }
     form {
       display: flex;
@@ -42,64 +36,81 @@
     label {
       font-weight: bold;
     }
-    input, select, textarea, button {
+    input, textarea, button {
       padding: 10px;
       font-size: 1em;
       border-radius: 8px;
       border: 1px solid #ccc;
     }
-    button {
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-option {
+      flex: 1 1 calc(33% - 10px);
+      padding: 10px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background-color: #f9f9f9;
+    }
+    .btn-option.selected {
+      font-weight: bold;
+      color: white;
+    }
+    .btn-green.selected {
+      background-color: #4CAF50;
+    }
+    .btn-red.selected {
+      background-color: #d9534f;
+    }
+    button[type="submit"] {
       background-color: #a36d6d;
       color: white;
       border: none;
-      cursor: pointer;
     }
-    button:hover {
+    button[type="submit"]:hover {
       background-color: #874d4d;
-    }
-    #countdown {
-      text-align: center;
-      font-size: 1.2em;
-      margin-bottom: 20px;
-      color: #444;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>החתונה של עמית ולינוי</h1>
-    <div class="info">
-      <h2>2.6.26</h2>
-      <div id="countdown">טוען ספירה לאחור...</div>
-      <p>נשמח לראות אתכם חוגגים איתנו ❤</p>
-      <p>האירוע יתקיים במקום יפייפה (הפרטים בהמשך)</p>
-    </div>
+    <h2>2.6.26</h2>
+    <div id="countdown">טוען ספירה לאחור...</div>
+    <p style="text-align: center;">נשמח לראות אתכם חוגגים איתנו ❤<br>האירוע יתקיים במקום יפייפה (הפרטים בהמשך)</p>
 
     <form id="rsvp-form">
-      <label for="name">שם מלא</label>
+      <label for="name">שם מלא *</label>
       <input type="text" id="name" name="name" required>
 
-      <label for="attending">האם תגיעו?</label>
-      <select id="attending" name="attending" required>
-        <option value="כן">כן, בוודאי!</option>
-        <option value="לא">לצערי לא אוכל להגיע</option>
-      </select>
+      <label>האם תגיעו? *</label>
+      <div class="button-group">
+        <div class="btn-option btn-green" data-value="כן">כן, בוודאי!</div>
+        <div class="btn-option btn-red" data-value="לא">לא, לצערי</div>
+      </div>
+      <input type="hidden" id="attending" name="attending" required>
 
-      <label for="guests">כמה אנשים יגיעו?</label>
-      <input type="number" id="guests" name="guests" min="1" max="10">
+      <label>כמה אנשים יגיעו? *</label>
+      <div class="button-group">
+        <div class="btn-option" data-value="1">רק אני</div>
+        <div class="btn-option" data-value="2">זוג</div>
+        <div class="btn-option" data-value="3">3</div>
+        <div class="btn-option" data-value="4">4</div>
+        <div class="btn-option" data-value="5">5</div>
+      </div>
+      <input type="hidden" id="guests" name="guests" required>
+      <label for="guestsMore">אם יותר מ־5, כתבו כמה אנשים</label>
+      <input type="number" id="guestsMore" min="6">
 
-      <label for="menu">העדפה קולינרית</label>
-      <select id="menu" name="menu">
-        <option value="רגיל">רגיל</option>
-        <option value="צמחוני">צמחוני</option>
-        <option value="טבעוני">טבעוני</option>
-      </select>
+      <label for="phone">טלפון (חובה)</label>
+      <input type="tel" id="phone" name="phone" required>
 
       <label for="notes">הערות / ברכות</label>
       <textarea id="notes" name="notes" rows="3"></textarea>
-
-      <label for="phone">טלפון (אופציונלי)</label>
-      <input type="tel" id="phone" name="phone">
 
       <button type="submit">שלח אישור הגעה</button>
     </form>
@@ -122,15 +133,29 @@
       countdownElement.innerText = `נותרו ${days} ימים, ${hours} שעות ו־${minutes} דקות`;
     }, 1000);
 
+    // בחירת כפתורי משתתפים ותשובה
+    document.querySelectorAll('.btn-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.parentElement;
+        group.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected', 'btn-green', 'btn-red'));
+        btn.classList.add('selected');
+        if (btn.innerText.includes('כן')) btn.classList.add('btn-green');
+        if (btn.innerText.includes('לא')) btn.classList.add('btn-red');
+
+        const hiddenInput = group.nextElementSibling;
+        hiddenInput.value = btn.dataset.value;
+      });
+    });
+
     document.getElementById("rsvp-form").addEventListener("submit", async function(e) {
       e.preventDefault();
+      const guestsValue = document.getElementById("guestsMore").value || document.getElementById("guests").value;
       const data = {
         name: document.getElementById("name").value,
         attending: document.getElementById("attending").value,
-        guests: document.getElementById("guests").value,
-        menu: document.getElementById("menu").value,
-        notes: document.getElementById("notes").value,
-        phone: document.getElementById("phone").value
+        guests: guestsValue,
+        phone: document.getElementById("phone").value,
+        notes: document.getElementById("notes").value
       };
 
       try {
@@ -146,6 +171,7 @@
         if (response.ok) {
           alert("אישור ההגעה נשלח בהצלחה!");
           document.getElementById("rsvp-form").reset();
+          document.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected', 'btn-green', 'btn-red'));
         } else {
           alert("אירעה שגיאה בשליחה, נסה שוב מאוחר יותר.");
         }
