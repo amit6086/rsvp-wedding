@@ -64,12 +64,24 @@
     .btn-red.selected {
       background-color: #d9534f;
     }
-    .guests-extra {
+    .guests-extra-combined {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: stretch;
+    }
+    .guests-extra-combined .btn-option,
+    .guests-extra-combined .guests-extra-field {
+      flex: 1 1 calc(50% - 5px);
+    }
+    .guests-extra-field {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-top: -5px;
-      margin-right: 5px;
+      justify-content: center;
+    }
+    .guests-extra-field label {
+      font-size: 0.9em;
+      margin-bottom: 4px;
     }
     button[type="submit"] {
       background-color: #a36d6d;
@@ -112,8 +124,10 @@
           <div class="btn-option" data-value="2">זוג</div>
           <div class="btn-option" data-value="3">3</div>
           <div class="btn-option" data-value="4">4</div>
-          <div class="btn-option" data-value="5" style="flex: 1 1 100px; padding: 12px;">5</div>
-          <div class="guests-extra">
+        </div>
+        <div class="guests-extra-combined">
+          <div class="btn-option" data-value="5">5</div>
+          <div class="guests-extra-field">
             <label for="guestsMore">אם יותר מ־5, כתבו כמה אנשים</label>
             <input type="number" id="guestsMore" min="6">
           </div>
@@ -150,7 +164,6 @@
       countdownElement.innerText = `נותרו ${days} ימים, ${hours} שעות ו־${minutes} דקות`;
     }, 1000);
 
-    // בחירת כפתורים
     document.querySelectorAll('.btn-option').forEach(btn => {
       btn.addEventListener('click', () => {
         const group = btn.parentElement;
