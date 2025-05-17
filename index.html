@@ -49,7 +49,7 @@
     }
     .btn-option {
       flex: 1 1 calc(33% - 10px);
-      padding: 10px;
+      padding: 12px;
       text-align: center;
       border-radius: 8px;
       border: 1px solid #ccc;
@@ -59,12 +59,17 @@
     .btn-option.selected {
       font-weight: bold;
       color: white;
-    }
-    .btn-green.selected {
       background-color: #4CAF50;
     }
     .btn-red.selected {
       background-color: #d9534f;
+    }
+    .guests-extra {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: -5px;
+      margin-right: 5px;
     }
     button[type="submit"] {
       background-color: #a36d6d;
@@ -73,6 +78,12 @@
     }
     button[type="submit"]:hover {
       background-color: #874d4d;
+    }
+    .note {
+      text-align: left;
+      font-size: 0.85em;
+      color: red;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -88,29 +99,35 @@
       <input type="text" id="name" name="name" required>
 
       <label>האם תגיעו? *</label>
-      <div class="button-group">
+      <div class="button-group" id="attending-group">
         <div class="btn-option btn-green" data-value="כן">כן, בוודאי!</div>
         <div class="btn-option btn-red" data-value="לא">לא, לצערי</div>
       </div>
       <input type="hidden" id="attending" name="attending" required>
 
-      <label>כמה אנשים יגיעו? *</label>
-      <div class="button-group">
-        <div class="btn-option" data-value="1">רק אני</div>
-        <div class="btn-option" data-value="2">זוג</div>
-        <div class="btn-option" data-value="3">3</div>
-        <div class="btn-option" data-value="4">4</div>
-        <div class="btn-option" data-value="5">5</div>
+      <div id="guests-section">
+        <label>כמה אנשים יגיעו? *</label>
+        <div class="button-group">
+          <div class="btn-option" data-value="1">רק אני</div>
+          <div class="btn-option" data-value="2">זוג</div>
+          <div class="btn-option" data-value="3">3</div>
+          <div class="btn-option" data-value="4">4</div>
+          <div class="btn-option" data-value="5" style="flex: 1 1 100px; padding: 12px;">5</div>
+          <div class="guests-extra">
+            <label for="guestsMore">אם יותר מ־5, כתבו כמה אנשים</label>
+            <input type="number" id="guestsMore" min="6">
+          </div>
+        </div>
+        <input type="hidden" id="guests" name="guests" required>
       </div>
-      <input type="hidden" id="guests" name="guests" required>
-      <label for="guestsMore">אם יותר מ־5, כתבו כמה אנשים</label>
-      <input type="number" id="guestsMore" min="6">
 
-      <label for="phone">טלפון (חובה)</label>
+      <label for="phone">טלפון *</label>
       <input type="tel" id="phone" name="phone" required>
 
       <label for="notes">הערות / ברכות</label>
       <textarea id="notes" name="notes" rows="3"></textarea>
+
+      <div class="note">* שאלת חובה</div>
 
       <button type="submit">שלח אישור הגעה</button>
     </form>
@@ -133,7 +150,7 @@
       countdownElement.innerText = `נותרו ${days} ימים, ${hours} שעות ו־${minutes} דקות`;
     }, 1000);
 
-    // בחירת כפתורי משתתפים ותשובה
+    // בחירת כפתורים
     document.querySelectorAll('.btn-option').forEach(btn => {
       btn.addEventListener('click', () => {
         const group = btn.parentElement;
@@ -143,17 +160,27 @@
         if (btn.innerText.includes('לא')) btn.classList.add('btn-red');
 
         const hiddenInput = group.nextElementSibling;
-        hiddenInput.value = btn.dataset.value;
+        if (hiddenInput) hiddenInput.value = btn.dataset.value;
       });
     });
 
     document.getElementById("rsvp-form").addEventListener("submit", async function(e) {
       e.preventDefault();
-      const guestsValue = document.getElementById("guestsMore").value || document.getElementById("guests").value;
+      const attending = document.getElementById("attending").value;
+      const guestsHidden = document.getElementById("guests");
+      const guestsMore = document.getElementById("guestsMore").value;
+
+      if (attending === "לא") {
+        guestsHidden.value = "0";
+      } else {
+        guestsHidden.value = guestsMore || guestsHidden.value;
+        if (!guestsHidden.value) return alert("בחר מספר אורחים או רשום כמה יגיעו");
+      }
+
       const data = {
         name: document.getElementById("name").value,
-        attending: document.getElementById("attending").value,
-        guests: guestsValue,
+        attending: attending,
+        guests: guestsHidden.value,
         phone: document.getElementById("phone").value,
         notes: document.getElementById("notes").value
       };
