@@ -105,13 +105,13 @@
         method: 'POST',
         body: JSON.stringify(data)
       })
-      .then(response => {
-        if (response.ok) {
-          alert('אישור ההגעה נשלח בהצלחה!');
-          form.reset();
-        } else {
-          alert('שגיאה בשליחה. נסו שוב.');
-        }
+      .then(response => response.text())
+      .then(text => {
+        alert('שרת הגיב: ' + text);
+        form.reset();
+      })
+      .catch(error => {
+        alert('שגיאה בשליחה: ' + error.message);
       });
     });
   </script>
