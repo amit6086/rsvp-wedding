@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>החתונה של עמית ולינוי</title>
+  <title>החתונה של לינוי ועמית</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -48,7 +48,7 @@
       gap: 10px;
     }
     .btn-option {
-      flex: 1 1 calc(33% - 10px);
+      flex: 1 1 calc(33.333% - 10px);
       padding: 12px;
       text-align: center;
       border-radius: 8px;
@@ -63,20 +63,6 @@
     }
     .btn-red.selected {
       background-color: #d9534f;
-    }
-    .guests-extra-combined {
-      display: flex;
-      flex-wrap: nowrap;
-      gap: 10px;
-      align-items: flex-end;
-    }
-    .guests-extra-combined .btn-option,
-    .guests-extra-combined .guests-extra-field {
-      flex: 1;
-    }
-    .guests-extra-field label {
-      font-size: 0.9em;
-      margin-bottom: 4px;
     }
     button[type="submit"] {
       background-color: #a36d6d;
@@ -119,13 +105,8 @@
           <div class="btn-option" data-value="2">זוג</div>
           <div class="btn-option" data-value="3">3</div>
           <div class="btn-option" data-value="4">4</div>
-        </div>
-        <div class="guests-extra-combined">
           <div class="btn-option" data-value="5">5</div>
-          <div class="guests-extra-field">
-            <label for="guestsMore">אם יותר מ־5, כתבו כמה אנשים</label>
-            <input type="number" id="guestsMore" min="6">
-          </div>
+          <div class="btn-option" data-value="מעל 5, צריך להתקשר לוודא מספר">מעל 5? לחצו כאן</div>
         </div>
         <input type="hidden" id="guests" name="guests" required>
       </div>
@@ -172,29 +153,19 @@
           if (btn.innerText.includes('כן')) btn.classList.add('btn-green');
           if (btn.innerText.includes('לא')) btn.classList.add('btn-red');
           document.getElementById(key).value = btn.dataset.value;
-          if (key === 'guests') {
-            document.getElementById("guestsMore").value = "";
-          }
         });
       });
-    });
-
-    document.getElementById("guestsMore").addEventListener("input", () => {
-      document.querySelectorAll("#guests-buttons .btn-option, .guests-extra-combined .btn-option").forEach(btn => btn.classList.remove('selected'));
-      document.getElementById("guests").value = document.getElementById("guestsMore").value;
     });
 
     document.getElementById("rsvp-form").addEventListener("submit", async function(e) {
       e.preventDefault();
       const attending = document.getElementById("attending").value;
       const guestsHidden = document.getElementById("guests");
-      const guestsMore = document.getElementById("guestsMore").value;
 
       if (attending === "לא") {
         guestsHidden.value = "0";
       } else {
-        guestsHidden.value = guestsMore || guestsHidden.value;
-        if (!guestsHidden.value) return alert("בחר מספר אורחים או רשום כמה יגיעו");
+        if (!guestsHidden.value) return alert("בחר מספר אורחים כדי להמשיך");
       }
 
       const data = {
