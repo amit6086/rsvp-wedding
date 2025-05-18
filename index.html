@@ -66,18 +66,13 @@
     }
     .guests-extra-combined {
       display: flex;
-      flex-direction: row;
+      flex-wrap: nowrap;
       gap: 10px;
-      align-items: stretch;
+      align-items: flex-end;
     }
     .guests-extra-combined .btn-option,
     .guests-extra-combined .guests-extra-field {
       flex: 1;
-    }
-    .guests-extra-field {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
     .guests-extra-field label {
       font-size: 0.9em;
@@ -119,7 +114,7 @@
 
       <div id="guests-section">
         <label>כמה אנשים יגיעו? *</label>
-        <div class="button-group">
+        <div class="button-group" id="guests-buttons">
           <div class="btn-option" data-value="1">רק אני</div>
           <div class="btn-option" data-value="2">זוג</div>
           <div class="btn-option" data-value="3">3</div>
@@ -164,17 +159,29 @@
       countdownElement.innerText = `נותרו ${days} ימים, ${hours} שעות ו־${minutes} דקות`;
     }, 1000);
 
-    document.querySelectorAll('.btn-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const group = btn.parentElement;
-        group.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected', 'btn-green', 'btn-red'));
-        btn.classList.add('selected');
-        if (btn.innerText.includes('כן')) btn.classList.add('btn-green');
-        if (btn.innerText.includes('לא')) btn.classList.add('btn-red');
+    const btnGroups = {
+      attending: document.getElementById("attending-group"),
+      guests: document.getElementById("guests-buttons")
+    };
 
-        const hiddenInput = group.nextElementSibling;
-        if (hiddenInput) hiddenInput.value = btn.dataset.value;
+    Object.entries(btnGroups).forEach(([key, group]) => {
+      group.querySelectorAll('.btn-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected', 'btn-green', 'btn-red'));
+          btn.classList.add('selected');
+          if (btn.innerText.includes('כן')) btn.classList.add('btn-green');
+          if (btn.innerText.includes('לא')) btn.classList.add('btn-red');
+          document.getElementById(key).value = btn.dataset.value;
+          if (key === 'guests') {
+            document.getElementById("guestsMore").value = "";
+          }
+        });
       });
+    });
+
+    document.getElementById("guestsMore").addEventListener("input", () => {
+      document.querySelectorAll("#guests-buttons .btn-option, .guests-extra-combined .btn-option").forEach(btn => btn.classList.remove('selected'));
+      document.getElementById("guests").value = document.getElementById("guestsMore").value;
     });
 
     document.getElementById("rsvp-form").addEventListener("submit", async function(e) {
