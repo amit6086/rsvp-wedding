@@ -3,10 +3,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>החתונה של לינוי ועמית</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Heebo', sans-serif;
+      font-family: 'Assistant', sans-serif;
       background: linear-gradient(to bottom, #fdfaf6, #ffffff);
       padding: 20px;
       margin: 0;
@@ -21,7 +21,6 @@
       border: 1px solid #e0d6c6;
     }
     h1 {
-      font-family: serif;
       font-size: 2.8em;
       text-align: center;
       color: #c8a165;
@@ -94,6 +93,7 @@
       color: white;
       border: none;
       font-size: 1.2em;
+      cursor: pointer;
     }
     button[type="submit"]:hover {
       background-color: #b98c50;
@@ -102,6 +102,30 @@
       font-size: 0.85em;
       color: red;
       margin-top: -10px;
+    }
+
+    #success-popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c8a165;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: none;
+      animation: fadeInOut 4s forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+      10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
     }
   </style>
 </head>
@@ -147,6 +171,8 @@
     </form>
   </div>
 
+  <div id="success-popup">תודה שאישרת הגעה! נתראה בחתונה 🎉</div>
+
   <script>
     const targetDate = new Date("2026-06-02T20:00:00").getTime();
     const countdownElement = document.getElementById("countdown");
@@ -183,13 +209,19 @@
 
     document.getElementById("rsvp-form").addEventListener("submit", async function(e) {
       e.preventDefault();
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+
       const attending = document.getElementById("attending").value;
       const guestsHidden = document.getElementById("guests");
-
       if (attending === "לא") {
         guestsHidden.value = "0";
       } else {
-        if (!guestsHidden.value) return alert("בחר מספר אורחים כדי להמשיך");
+        if (!guestsHidden.value) {
+          alert("בחר מספר אורחים כדי להמשיך");
+          submitBtn.disabled = false;
+          return;
+        }
       }
 
       const data = {
@@ -211,8 +243,8 @@
         });
 
         if (response.ok) {
-          alert("אישור ההגעה נשלח בהצלחה!");
-          document.getElementById("rsvp-form").reset();
+          showPopup();
+          this.reset();
           document.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected', 'btn-green', 'btn-red'));
         } else {
           alert("אירעה שגיאה בשליחה, נסה שוב מאוחר יותר.");
@@ -220,7 +252,17 @@
       } catch (err) {
         alert("שגיאת רשת: נא לבדוק חיבור או לנסות שוב.");
       }
+
+      submitBtn.disabled = false;
     });
+
+    function showPopup() {
+      const popup = document.getElementById('success-popup');
+      popup.style.display = 'block';
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 4000);
+    }
   </script>
 </body>
 </html>
